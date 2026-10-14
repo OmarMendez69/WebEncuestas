@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Profesores</title>
+</head>
+<body>
+
+<h1>Profesores</h1>
+
+<h2>1. Registrar profesor</h2>
+<form onsubmit="agregarProfesor(); return false;">
+  <p>Clave: <input id="clave" required pattern="[A-Za-z0-9]{3,10}" title="3 a 10 letras o números"></p>
+  <p>Nombre: <input id="nombre" required pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,40}" title="Solo letras"></p>
+  <p>Apellidos: <input id="apellidos" required pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,60}" title="Solo letras"></p>
+  <p>Correo: <input id="correo" type="email" required></p>
+  <p>Teléfono: <input id="tel" required pattern="[0-9]{10}" title="10 números"></p>
+  <p><button type="submit">Guardar profesor</button></p>
+</form>
+
+<table id="tabla1" border="1" cellpadding="6">
+  <tr><th>Clave</th><th>Nombre</th><th>Apellidos</th><th>Correo</th><th>Teléfono</th></tr>
+</table>
+
+<hr>
+
+<h2>2. Asignar materia y grupo</h2>
+<p>Puedes asignar varias materias y grupos al mismo profesor.</p>
+<form onsubmit="agregarAsignacion(); return false;">
+  <p>Profesor: <select id="profesor" required><option value="">-- Elige --</option></select></p>
+  <p>Materia: <input id="materia" required></p>
+  <p>Grupo: <input id="grupo" required pattern="[A-Z]{3,4}[0-9]{3,4}" title="Ejemplo: GTID243"
+                   placeholder="GTID243" oninput="this.value = this.value.toUpperCase()"></p>
+  <p><button type="submit">Asignar</button></p>
+</form>
+
+<table id="tabla2" border="1" cellpadding="6">
+  <tr><th>Profesor</th><th>Materia</th><th>Grupo</th></tr>
+</table>
+
+<script>
+function agregarProfesor() {
+  var ids = ['clave', 'nombre', 'apellidos', 'correo', 'tel'];
+  var fila = document.getElementById('tabla1').insertRow();
+  for (var i = 0; i < ids.length; i++) {
+    fila.insertCell().textContent = document.getElementById(ids[i]).value;
+  }
+
+  // Agrega al profesor a la lista desplegable del paso 2
+  var texto = document.getElementById('clave').value + ' - ' + document.getElementById('nombre').value + ' ' + document.getElementById('apellidos').value;
+  document.getElementById('profesor').add(new Option(texto, texto));
+
+  document.forms[0].reset();
+}
+
+function agregarAsignacion() {
+  var fila = document.getElementById('tabla2').insertRow();
+  fila.insertCell().textContent = document.getElementById('profesor').value;
+  fila.insertCell().textContent = document.getElementById('materia').value;
+  fila.insertCell().textContent = document.getElementById('grupo').value;
+
+  document.getElementById('materia').value = '';
+  document.getElementById('grupo').value = '';
+}
+</script>
+
+</body>
+</html>
