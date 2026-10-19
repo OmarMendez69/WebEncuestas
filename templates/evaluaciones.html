@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Evaluaciones</title>
+    <link rel="stylesheet" href="../static/css/estilo.css">
+</head>
+<body>
+
+<header>
+    <h2>Sistema de Evaluación Docente</h2>
+</header>
+
+<main>
+
+<h1>Evaluaciones</h1>
+<p><a class="boton" href="#">Nueva evaluación</a></p>
+<section class="tarjeta">
+    <table>
+        <tr><th>Grupo</th><th>Profesor</th><th>Materia</th><th>Alumnos</th><th>Respondidas</th><th>Estatus</th><th>Acciones</th></tr>
+        <tr><td>GTID232</td><td>Juan Pérez López</td><td>Bases de Datos</td><td>3</td><td>3</td><td>Cerrada</td><td><a class="boton chico" href="#">Modificar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr><tr><td>GTID243</td><td>María Hernández Ruiz</td><td>Programación Orientada a Objetos</td><td>30</td><td>12</td><td>Abierta</td><td><a class="boton chico" href="#">Modificar</a> <a class="boton chico" href="#">Cerrar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr>
+    </table>
+</section>
+<section class="tarjeta" id="modificar">
+    <h2>Modificar evaluación</h2>
+    <p>GTID243 - María Hernández Ruiz - Programación Orientada a Objetos</p>
+    <form action="#" method="post">
+        <label for="numAlumnos">Número de alumnos (no menor a las encuestas ya respondidas)</label>
+        <input type="number" id="numAlumnos" name="numAlumnos" min="12" step="1" value="30" required>
+        <button type="submit">Guardar</button>
+    </form>
+</section>
+</main>
+
+</body>
+</html>

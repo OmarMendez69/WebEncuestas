@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Materias del profesor</title>
+    <link rel="stylesheet" href="../static/css/estilo.css">
+</head>
+<body>
+
+<header>
+    <h2>Sistema de Evaluación Docente</h2>
+</header>
+
+<main>
+
+<h1>Materias del profesor</h1>
+<section class="tarjeta">
+    <h2>Profesor: Juan Pérez López</h2>
+    <h3>Materias que imparte</h3>
+    <table><tr><th>Materia</th><th>Acciones</th></tr>
+        <tr><td>Bases de Datos</td><td><a class="boton chico peligro" href="#">Quitar</a> </td></tr>
+        <tr><td>Programación Orientada a Objetos</td><td><a class="boton chico peligro" href="#">Quitar</a> </td></tr>
+    </table>
+</section>
+<section class="tarjeta">
+    <h3>Asignar otra materia</h3>
+    <form action="#" method="post">
+        <label for="materia">Materias disponibles</label>
+        <select id="materia" name="materia" required>
+            <option value="">-- Elige una materia --</option>
+            <option>Proyecto Integrador I</option>
+        </select>
+        <button type="submit">Asignar</button>
+    </form>
+</section>
+</main>
+
+</body>
+</html>

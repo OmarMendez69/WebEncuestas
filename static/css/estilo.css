@@ -1,0 +1,45 @@
+body { font-family: Arial, sans-serif; background: #f2f4f7; color: #222; margin: 0; }
+
+header { background: #1f4e79; color: white; padding: 12px 24px; }
+header h2 { margin: 0 0 8px 0; }
+
+main { max-width: 950px; margin: 20px auto; padding: 0 16px; }
+h1 { color: #1f4e79; }
+
+.tarjeta { background: white; border: 1px solid #d5dbe3; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
+.angosta { max-width: 400px; margin: 40px auto; }
+
+label { display: block; margin-top: 12px; font-weight: bold; }
+input[type="text"], input[type="password"], input[type="number"], select, textarea {
+    width: 100%; box-sizing: border-box; padding: 8px; margin-top: 4px;
+    border: 1px solid #aab4c0; border-radius: 4px; font-size: 14px;
+}
+.nota { color: #666; font-size: 13px; }
+
+button, .boton { display: inline-block; background: #1f4e79; color: white; border: none; border-radius: 4px;
+    padding: 9px 18px; margin-top: 14px; font-size: 14px; text-decoration: none; cursor: pointer; }
+button:hover, .boton:hover { background: #2d6aa3; }
+.chico { padding: 4px 10px; margin-top: 0; font-size: 13px; }
+.peligro { background: #b03a2e; }
+.peligro:hover { background: #cb4b3d; }
+
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #d5dbe3; padding: 8px; text-align: left; }
+th { background: #e6edf5; }
+.chica th, .chica td { padding: 4px; text-align: center; font-size: 13px; }
+.total td { background: #f0f4f8; font-weight: bold; }
+.scroll { overflow-x: auto; }
+
+.opciones { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.opcion { background: white; border: 1px solid #d5dbe3; border-radius: 8px; padding: 16px; color: #222; text-decoration: none; }
+.opcion:hover { border-color: #1f4e79; }
+.opcion strong { display: block; color: #1f4e79; margin-bottom: 4px; }
+.opcion span { font-size: 14px; color: #555; }
+
+.pregunta { background: white; border: 1px solid #d5dbe3; border-radius: 8px; padding: 12px 20px; margin-bottom: 10px; }
+.escala label { display: inline-block; margin: 0 14px 0 0; font-weight: normal; }
+
+.fila-barra { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.fila-barra span { width: 30px; font-size: 13px; }
+.pista { flex: 1; background: #e6edf5; border-radius: 4px; }
+.barra { background: #2d6aa3; height: 16px; border-radius: 4px; }

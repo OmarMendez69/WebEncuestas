@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nueva evaluación</title>
+    <link rel="stylesheet" href="../static/css/estilo.css">
+</head>
+<body>
+
+<header>
+    <h2>Sistema de Evaluación Docente</h2>
+</header>
+
+<main>
+
+<h1>Nueva evaluación</h1>
+<section class="tarjeta">
+    <form action="#" method="post">
+        <label for="grupo">Grupo</label>
+        <select id="grupo" name="grupo" required><option value="">-- Elige --</option><option>GTID232</option><option>GTID243</option></select>
+        <label for="profesor">Profesor</label>
+        <select id="profesor" name="profesor" required><option value="">-- Elige --</option><option>Juan Pérez López</option><option>María Hernández Ruiz</option></select>
+        <label for="materia">Materia (las que imparte el profesor)</label>
+        <select id="materia" name="materia" required><option value="">-- Elige --</option><option>Bases de Datos</option><option>Programación Orientada a Objetos</option></select>
+        <label for="numAlumnos">Número de alumnos que responderán</label>
+        <input type="number" id="numAlumnos" name="numAlumnos" min="1" step="1" required>
+        <p class="nota">No se registran nombres ni matrículas de los alumnos.</p>
+        <button type="submit">Guardar</button>
+    </form>
+</section>
+</main>
+
+</body>
+</html>

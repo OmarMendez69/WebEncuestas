@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Grupos</title>
+    <link rel="stylesheet" href="../static/css/estilo.css">
+</head>
+<body>
+
+<header>
+    <h2>Sistema de Evaluación Docente</h2>
+</header>
+
+<main>
+
+<h1>Grupos</h1>
+<section class="tarjeta">
+    <h2>Nuevo grupo</h2>
+    <form action="#" method="post">
+        <label for="nombre">Nombre del grupo</label>
+        <input type="text" id="nombre" name="nombre" maxlength="20" placeholder="Ejemplo: GTID232" required>
+        <button type="submit">Guardar</button>
+    </form>
+</section>
+<section class="tarjeta">
+    <h2>Grupos registrados</h2>
+    <table><tr><th>Nombre</th><th>Acciones</th></tr><tr><td>GTID232</td><td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr><tr><td>GTID243</td><td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr></table>
+</section>
+</main>
+
+</body>
+</html>

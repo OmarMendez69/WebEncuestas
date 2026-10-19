@@ -1,55 +1,38 @@
 <!DOCTYPE html>
-<html lang='es'>
+<html lang="es">
 <head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <title>Registro de Materias</title>
-    <link rel='stylesheet' href='main.css'>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Materias</title>
+    <link rel="stylesheet" href="../static/css/estilo.css">
 </head>
-
 <body>
 
-    <h1>Registro de Materias</h1>
+<header>
+    <h2>Sistema de Evaluación Docente</h2>
+</header>
 
-    <form id="formularioMateria">
+<main>
 
-        <label for="materia">Nombre de la materia:</label>
-        <input type="text" id="materia" required>
-
-        <button type="submit">Registrar materia</button>
-
+<h1>Materias</h1>
+<section class="tarjeta">
+    <h2>Registrar materia</h2>
+    <form action="#" method="post">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" name="nombre" maxlength="100" required>
+        <label for="estatus">Estatus</label>
+        <select id="estatus" name="estatus">
+            <option>Activo</option>
+            <option>Inactivo</option>
+        </select>
+        <button type="submit">Guardar</button>
     </form>
-
-    <h2>Materias registradas</h2>
-
-    <div id="listaMaterias"></div>
-
-    <script>
-
-        let materias = [];
-
-        document.getElementById("formularioMateria").addEventListener("submit", function(event) {
-
-            event.preventDefault();
-
-            let materia = document.getElementById("materia").value;
-
-            materias.push(materia);
-
-            document.getElementById("listaMaterias").innerHTML = "";
-
-            for (let i = 0; i < materias.length; i++) {
-
-                document.getElementById("listaMaterias").innerHTML +=
-                    "<p>" + (i + 1) + ". " + materias[i] + "</p>";
-
-            }
-
-            document.getElementById("formularioMateria").reset();
-
-        });
-
-    </script>
+</section>
+<section class="tarjeta">
+    <h2>Materias registrados</h2>
+    <table><tr><th>Nombre</th><th>Estatus</th><th>Acciones</th></tr><tr><td>Bases de Datos</td><td>Activo</td><td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr><tr><td>Programación Orientada a Objetos</td><td>Activo</td><td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr><tr><td>Proyecto Integrador I</td><td>Activo</td><td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr></table>
+</section>
+</main>
 
 </body>
 </html>
