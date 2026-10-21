@@ -16,107 +16,169 @@
 <main>
 
 <h1>Profesores</h1>
+
 <section class="tarjeta">
     <h2>Registrar profesor</h2>
+
     <form id="formProfesor" action="#" method="post" novalidate>
-        <label for="nombre">Nombre</label>
-        <input type="text" id="nombre" name="nombre" minlength="5" maxlength="150" pattern="[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' \-]{5,150}" autocomplete="off" title="Escribe nombre y al menos un apellido, solo letras. Ejemplos: María Hernández Ruiz, Juan Pérez" placeholder="Ejemplo: María Hernández Ruiz" required>
-        <p class="nota">Nombre y al menos un apellido (con un apellido basta). Solo letras, espacios, guion y apóstrofo.</p>
+        <label for="nombre">Nombre(s)</label>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <label for="apellidoPaterno">Apellido paterno</label>
+        <input type="text" id="apellidoPaterno" name="apellidoPaterno" required>
+
+        <label for="apellidoMaterno">Apellido materno</label>
+        <input type="text" id="apellidoMaterno" name="apellidoMaterno">
+        <p class="nota">Opcional.</p>
+
         <label for="estatus">Estatus</label>
         <select id="estatus" name="estatus" required>
-            <option>Activo</option>
-            <option>Inactivo</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
         </select>
+
         <button type="submit">Guardar</button>
     </form>
 </section>
+
 <section class="tarjeta">
     <h2>Profesores registrados</h2>
-    <table><tr><th>Nombre</th><th>Estatus</th><th>Acciones</th></tr><tr><td>Juan Pérez López</td><td>Activo</td><td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> <a class="boton chico" href="Form-asignar-materias.html">Materias</a> </td></tr><tr><td>María Hernández Ruiz</td><td>Activo</td><td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> <a class="boton chico" href="Form-asignar-materias.html">Materias</a> </td></tr></table>
+    <table>
+        <tr>
+            <th>Nombre</th>
+            <th>Estatus</th>
+            <th>Acciones</th>
+        </tr>
+        <tr>
+            <td>Juan Pérez López</td>
+            <td>Activo</td>
+            <td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> <a class="boton chico" href="Form-asignar-materias.html">Materias</a></td>
+        </tr>
+        <tr>
+            <td>María Hernández Ruiz</td>
+            <td>Activo</td>
+            <td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> <a class="boton chico" href="Form-asignar-materias.html">Materias</a></td>
+        </tr>
+    </table>
 </section>
+
 </main>
 
 <script>
-    // ---- Utilidades comunes (alertas y marcado de campos con error) ----
     function avisar(msg, campo) {
         alert(msg);
-        if (campo) { campo.classList.add('invalido'); campo.focus(); }
-    }
-    document.addEventListener('input', function (e) { e.target.classList.remove('invalido'); });
-    document.addEventListener('change', function (e) { e.target.classList.remove('invalido'); });
-
-    function limpiar(s) { return s.replace(/\s+/g, ' ').trim(); }
-    function sinAcentos(s) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
-    function existeEnTabla(tabla, texto) {
-        var buscado = sinAcentos(texto);
-        for (var i = 1; i < tabla.rows.length; i++) {
-            if (sinAcentos(limpiar(tabla.rows[i].cells[0].textContent)) === buscado) return true;
+        if (campo) {
+            campo.classList.add('invalido');
+            campo.focus();
         }
-        return false;
+    }
+
+    document.addEventListener('input', function(e) {
+        e.target.classList.remove('invalido');
+    });
+
+    function limpiar(s) {
+        return s.trim().replace(/\s+/g, ' ');
+    }
+
+    function validarNombre(valor) {
+        if (valor === '') return 'Este campo es obligatorio.';
+        if (valor.length > 150) return 'No puede superar los 150 caracteres.';
+
+        if (!/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+$/.test(valor)) {
+            return 'Solo se permiten letras y espacios.';
+        }
+
+        var palabras = valor.split(' ');
+
+        for (var i = 0; i < palabras.length; i++) {
+            if (palabras[i].length < 2) {
+                return 'Cada palabra debe tener al menos 2 letras.';
+            }
+        }
+
+        return '';
     }
 
     var form = document.getElementById('formProfesor');
     var nombre = document.getElementById('nombre');
+    var apellidoPaterno = document.getElementById('apellidoPaterno');
+    var apellidoMaterno = document.getElementById('apellidoMaterno');
     var estatus = document.getElementById('estatus');
     var tabla = document.querySelector('table');
 
-    // Partículas que pueden ir dentro de un nombre/apellido y NO cuentan como palabra por sí solas
-    var PARTICULAS = ['de', 'del', 'la', 'las', 'los', 'el', 'y', 'e', 'da', 'do', 'dos', 'di', 'van', 'von', 'der', 'san'];
-    var RE_PALABRA = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+(?:['\-][A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+)*$/;
-    var RE_VOCAL = /[aeiouyáéíóúü]/i;
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    function esParticula(p) { return PARTICULAS.indexOf(p.toLowerCase()) !== -1; }
+        var nom = limpiar(nombre.value);
+        var paterno = limpiar(apellidoPaterno.value);
+        var materno = limpiar(apellidoMaterno.value);
 
-    // "juan pérez de la cruz" -> "Juan Pérez de la Cruz"
-    function titulo(txt) {
-        return txt.toLowerCase().split(' ').map(function (p) {
-            if (esParticula(p)) return p;
-            return p.replace(/(^|['\-])(\S)/g, function (m, a, b) { return a + b.toUpperCase(); });
-        }).join(' ');
-    }
+        // Validar nombre
+        var error = validarNombre(nom);
+        if (error) {
+            avisar('Nombre(s): ' + error, nombre);
+            return;
+        }
 
-    // Devuelve el mensaje de error, o '' si el nombre es válido.
-    // Nota: el navegador no puede saber qué es nombre y qué es apellido; se valida la ESTRUCTURA
-    // (mínimo 2 palabras reales: nombre + 1 apellido), no que el nombre exista de verdad.
-    function validarNombre(v) {
-        if (v === '') return 'Escribe el nombre del profesor.';
-        if (v.length > 150) return 'El nombre no puede pasar de 150 caracteres.';
-        var palabras = v.split(' ');
-        for (var i = 0; i < palabras.length; i++) {
-            if (!RE_PALABRA.test(palabras[i])) {
-                return 'Solo se permiten letras, espacios, guion (-) y apóstrofo (\').\nRevisa: "' + palabras[i] + '"';
+        // Validar apellido paterno
+        error = validarNombre(paterno);
+        if (error) {
+            avisar('Apellido paterno: ' + error, apellidoPaterno);
+            return;
+        }
+
+        // Validar apellido materno si se escribió
+        if (materno !== '') {
+            error = validarNombre(materno);
+            if (error) {
+                avisar('Apellido materno: ' + error, apellidoMaterno);
+                return;
             }
         }
-        var reales = palabras.filter(function (p) { return !esParticula(p); });
-        if (reales.length < 2) return 'Escribe el nombre y al menos un apellido.\nEjemplo: Juan Pérez (con un solo apellido basta).';
-        if (v.length < 5) return 'El nombre es demasiado corto.';
-        if (esParticula(palabras[palabras.length - 1])) return 'El nombre no puede terminar en "' + palabras[palabras.length - 1] + '".';
-        for (var j = 0; j < reales.length; j++) {
-            var p = reales[j];
-            if (p.replace(/['\-]/g, '').length < 2) return 'Cada nombre o apellido debe tener al menos 2 letras (no se aceptan iniciales sueltas).\nRevisa: "' + p + '"';
-            if (!RE_VOCAL.test(p)) return '"' + p + '" no parece un nombre o apellido válido.';
-            if (/(.)\1\1/i.test(p)) return '"' + p + '" tiene la misma letra repetida 3 veces seguidas.';
+
+        // Revisar que cada campo comience con mayúscula
+        if (nom[0] !== nom[0].toUpperCase()) {
+            avisar('La primera letra del nombre debe ser mayúscula.', nombre);
+            return;
         }
-        return '';
-    }
 
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var valor = limpiar(nombre.value);
-        var error = validarNombre(valor);
-        if (error) { avisar(error, nombre); return; }
-        if (estatus.value !== 'Activo' && estatus.value !== 'Inactivo') { avisar('Elige un estatus válido (Activo o Inactivo).', estatus); return; }
-        valor = titulo(valor);
-        if (existeEnTabla(tabla, valor)) { avisar('Ese profesor ya está registrado:\n' + valor, nombre); return; }
+        if (paterno[0] !== paterno[0].toUpperCase()) {
+            avisar('La primera letra del apellido paterno debe ser mayúscula.', apellidoPaterno);
+            return;
+        }
 
-        // DEMO sin base de datos: agrega la fila a la tabla (se pierde al recargar).
-        // Cuando exista el backend, aquí va el envío real y se quita esta parte.
-        var tr = tabla.insertRow(-1);
-        tr.insertCell(-1).textContent = valor;
-        tr.insertCell(-1).textContent = estatus.value;
-        tr.insertCell(-1).innerHTML = '<a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> <a class="boton chico" href="Form-asignar-materias.html">Materias</a>';
+        if (materno !== '' && materno[0] !== materno[0].toUpperCase()) {
+            avisar('La primera letra del apellido materno debe ser mayúscula.', apellidoMaterno);
+            return;
+        }
+
+        // Validar estatus
+        if (estatus.value !== 'Activo' && estatus.value !== 'Inactivo') {
+            avisar('Selecciona un estatus válido.', estatus);
+            return;
+        }
+
+        // Juntar los nombres sin modificar sus mayúsculas
+        var valor = nom + ' ' + paterno;
+        if (materno !== '') valor += ' ' + materno;
+
+        // Revisar si el profesor ya está registrado
+        for (var i = 1; i < tabla.rows.length; i++) {
+            if (limpiar(tabla.rows[i].cells[0].textContent).toLowerCase() === valor.toLowerCase()) {
+                avisar('Este profesor ya está registrado.', nombre);
+                return;
+            }
+        }
+
+        // Agregar profesor a la tabla
+        var fila = tabla.insertRow(-1);
+        fila.insertCell(0).textContent = valor;
+        fila.insertCell(1).textContent = estatus.value;
+        fila.insertCell(2).innerHTML = '<a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> <a class="boton chico" href="Form-asignar-materias.html">Materias</a>';
 
         alert('Profesor guardado correctamente:\n' + valor + ' (' + estatus.value + ')');
+
         form.reset();
         nombre.focus();
     });
