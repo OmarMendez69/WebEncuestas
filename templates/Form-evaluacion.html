@@ -10,26 +10,93 @@
 
 <header>
     <h2>Sistema de Evaluación Docente</h2>
+    <nav><a href="index.html">Inicio</a> | <a href="menu.html">Menú principal</a></nav>
 </header>
 
 <main>
 
 <h1>Nueva evaluación</h1>
 <section class="tarjeta">
-    <form action="#" method="post">
+    <form id="formEvaluacion" action="#" method="post" novalidate>
         <label for="grupo">Grupo</label>
         <select id="grupo" name="grupo" required><option value="">-- Elige --</option><option>GTID232</option><option>GTID243</option></select>
         <label for="profesor">Profesor</label>
         <select id="profesor" name="profesor" required><option value="">-- Elige --</option><option>Juan Pérez López</option><option>María Hernández Ruiz</option></select>
         <label for="materia">Materia (las que imparte el profesor)</label>
-        <select id="materia" name="materia" required><option value="">-- Elige --</option><option>Bases de Datos</option><option>Programación Orientada a Objetos</option></select>
+        <select id="materia" name="materia" required disabled><option value="">-- Elige primero un profesor --</option></select>
         <label for="numAlumnos">Número de alumnos que responderán</label>
-        <input type="number" id="numAlumnos" name="numAlumnos" min="1" step="1" required>
+        <input type="number" id="numAlumnos" name="numAlumnos" min="1" max="100" step="1" title="Escribe un número entero de 1 a 100" required>
+        <label for="clave">Clave de la evaluación</label>
+        <input type="text" id="clave" name="clave" inputmode="numeric" minlength="4" maxlength="6" pattern="[0-9]{4,6}" title="La clave debe tener de 4 a 6 números. Ejemplo: 4821" placeholder="De 4 a 6 dígitos" required>
+        <p class="nota">Díctala en el salón o escríbela en el pizarrón: solo quien la tenga podrá responder.</p>
         <p class="nota">No se registran nombres ni matrículas de los alumnos.</p>
         <button type="submit">Guardar</button>
     </form>
 </section>
 </main>
+
+<script>
+    // ---- Utilidades comunes (alertas y marcado de campos con error) ----
+    function avisar(msg, campo) {
+        alert(msg);
+        if (campo) { campo.classList.add('invalido'); campo.focus(); }
+    }
+    document.addEventListener('input', function (e) { e.target.classList.remove('invalido'); });
+    document.addEventListener('change', function (e) { e.target.classList.remove('invalido'); });
+
+    var MAX_ALUMNOS = 100;   // ajustar al máximo real por grupo
+
+    // DEMO: materias que imparte cada profesor (misma info de la pantalla "Materias del profesor").
+    // Con base de datos esto sale de la consulta profesor -> materias.
+    var MATERIAS_POR_PROFESOR = {
+        'Juan Pérez López': ['Bases de Datos', 'Programación Orientada a Objetos'],
+        'María Hernández Ruiz': ['Programación Orientada a Objetos']
+    };
+
+    var form = document.getElementById('formEvaluacion');
+    var grupo = document.getElementById('grupo');
+    var profesor = document.getElementById('profesor');
+    var materia = document.getElementById('materia');
+    var numAlumnos = document.getElementById('numAlumnos');
+    var clave = document.getElementById('clave');
+
+    // La materia depende del profesor elegido
+    profesor.addEventListener('change', function () {
+        var lista = MATERIAS_POR_PROFESOR[profesor.value] || [];
+        materia.innerHTML = '';
+        var vacia = document.createElement('option');
+        vacia.value = '';
+        vacia.textContent = lista.length ? '-- Elige --' : '-- Elige primero un profesor --';
+        materia.appendChild(vacia);
+        lista.forEach(function (m) {
+            var o = document.createElement('option');
+            o.textContent = m;
+            materia.appendChild(o);
+        });
+        materia.disabled = lista.length === 0;
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (grupo.value === '') { avisar('Elige un grupo.', grupo); return; }
+        if (profesor.value === '') { avisar('Elige un profesor.', profesor); return; }
+        var lista = MATERIAS_POR_PROFESOR[profesor.value] || [];
+        if (materia.value === '' || lista.indexOf(materia.value) === -1) { avisar('Elige una materia que imparta el profesor seleccionado.', materia); return; }
+
+        var n = numAlumnos.value.trim();
+        if (!/^[0-9]+$/.test(n)) { avisar('El número de alumnos debe ser un entero (sin decimales, signos ni letras).', numAlumnos); return; }
+        n = parseInt(n, 10);
+        if (n < 1 || n > MAX_ALUMNOS) { avisar('El número de alumnos debe estar entre 1 y ' + MAX_ALUMNOS + '.', numAlumnos); return; }
+
+        var c = clave.value.trim();
+        if (!/^[0-9]{4,6}$/.test(c)) { avisar('La clave debe tener de 4 a 6 números (solo dígitos).\nEjemplo: 4821', clave); return; }
+
+        alert('Evaluación guardada correctamente:\n' + grupo.value + ' - ' + profesor.value + ' - ' + materia.value + '\nAlumnos: ' + n + '   Clave: ' + c);
+        form.reset();
+        materia.innerHTML = '<option value="">-- Elige primero un profesor --</option>';
+        materia.disabled = true;
+    });
+</script>
 
 </body>
 </html>

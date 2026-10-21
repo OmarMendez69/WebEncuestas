@@ -10,6 +10,7 @@
 
 <header>
     <h2>Sistema de Evaluación Docente</h2>
+    <nav><a href="index.html">Inicio</a> | <a href="menu.html">Menú principal</a></nav>
 </header>
 
 <main>
@@ -25,7 +26,7 @@
 </section>
 <section class="tarjeta">
     <h3>Asignar otra materia</h3>
-    <form action="#" method="post">
+    <form id="formAsignar" action="#" method="post" novalidate>
         <label for="materia">Materias disponibles</label>
         <select id="materia" name="materia" required>
             <option value="">-- Elige una materia --</option>
@@ -35,6 +36,26 @@
     </form>
 </section>
 </main>
+
+<script>
+    // ---- Utilidades comunes (alertas y marcado de campos con error) ----
+    function avisar(msg, campo) {
+        alert(msg);
+        if (campo) { campo.classList.add('invalido'); campo.focus(); }
+    }
+    document.addEventListener('input', function (e) { e.target.classList.remove('invalido'); });
+    document.addEventListener('change', function (e) { e.target.classList.remove('invalido'); });
+
+    var form = document.getElementById('formAsignar');
+    var materia = document.getElementById('materia');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (materia.value === '' || materia.selectedIndex === 0) { avisar('Elige una materia para asignar.', materia); return; }
+        alert('Materia asignada correctamente:\n' + materia.value);
+        form.reset();
+    });
+</script>
 
 </body>
 </html>

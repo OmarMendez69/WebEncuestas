@@ -43,3 +43,9 @@ th { background: #e6edf5; }
 .fila-barra span { width: 30px; font-size: 13px; }
 .pista { flex: 1; background: #e6edf5; border-radius: 4px; }
 .barra { background: #2d6aa3; height: 16px; border-radius: 4px; }
+
+nav { font-size: 14px; }
+nav a { color: white; }
+
+/* Campo con error de validación */
+.invalido { border-color: #b03a2e !important; background: #fdf0ef; }

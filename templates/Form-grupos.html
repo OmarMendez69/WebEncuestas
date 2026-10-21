@@ -10,6 +10,7 @@
 
 <header>
     <h2>Sistema de Evaluación Docente</h2>
+    <nav><a href="index.html">Inicio</a> | <a href="menu.html">Menú principal</a></nav>
 </header>
 
 <main>
@@ -17,9 +18,9 @@
 <h1>Grupos</h1>
 <section class="tarjeta">
     <h2>Nuevo grupo</h2>
-    <form action="#" method="post">
+    <form id="formGrupo" action="#" method="post" novalidate>
         <label for="nombre">Nombre del grupo</label>
-        <input type="text" id="nombre" name="nombre" maxlength="20" placeholder="Ejemplo: GTID232" required>
+        <input type="text" id="nombre" name="nombre" minlength="7" maxlength="7" pattern="GTID[1-9]{3}" autocomplete="off" title="Ejemplo: GTID243. GTID seguido de 3 números del 1 al 9: generación (2), cuatrimestre (4) y número de grupo (3). Sin ceros." placeholder="Ejemplo: GTID243" required>
         <button type="submit">Guardar</button>
     </form>
 </section>
@@ -28,6 +29,54 @@
     <table><tr><th>Nombre</th><th>Acciones</th></tr><tr><td>GTID232</td><td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr><tr><td>GTID243</td><td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr></table>
 </section>
 </main>
+
+<script>
+    // ---- Utilidades comunes (alertas y marcado de campos con error) ----
+    function avisar(msg, campo) {
+        alert(msg);
+        if (campo) { campo.classList.add('invalido'); campo.focus(); }
+    }
+    document.addEventListener('input', function (e) { e.target.classList.remove('invalido'); });
+    document.addEventListener('change', function (e) { e.target.classList.remove('invalido'); });
+
+    function limpiar(s) { return s.replace(/\s+/g, ' ').trim(); }
+    function sinAcentos(s) { return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+    function existeEnTabla(tabla, texto) {
+        var buscado = sinAcentos(texto);
+        for (var i = 1; i < tabla.rows.length; i++) {
+            if (sinAcentos(limpiar(tabla.rows[i].cells[0].textContent)) === buscado) return true;
+        }
+        return false;
+    }
+
+    var form = document.getElementById('formGrupo');
+    var nombre = document.getElementById('nombre');
+    var tabla = document.querySelector('table');
+    var RE_GRUPO = /^GTID[1-9]{3}$/;
+
+    // Mientras escribe: mayúsculas y sin espacios
+    nombre.addEventListener('input', function () {
+        nombre.value = nombre.value.toUpperCase().replace(/\s/g, '');
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var valor = nombre.value.toUpperCase().replace(/\s/g, '');
+        if (valor === '') { avisar('Escribe el nombre del grupo.\nEjemplo: GTID243', nombre); return; }
+        if (valor.length !== 7) { avisar('El grupo debe tener exactamente 7 caracteres: GTID y 3 números.\nEjemplo: GTID243', nombre); return; }
+        if (!RE_GRUPO.test(valor)) { avisar('Formato inválido: debe ser GTID seguido de 3 números del 1 al 9 (sin ceros):\n1.º generación, 2.º cuatrimestre, 3.º número de grupo.\nEjemplo: GTID243', nombre); return; }
+        if (existeEnTabla(tabla, valor)) { avisar('Ese grupo ya está registrado: ' + valor, nombre); return; }
+
+        // DEMO sin base de datos (se pierde al recargar). Reemplazar por el envío real.
+        var tr = tabla.insertRow(-1);
+        tr.insertCell(-1).textContent = valor;
+        tr.insertCell(-1).innerHTML = '<a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a>';
+
+        alert('Grupo guardado correctamente: ' + valor);
+        form.reset();
+        nombre.focus();
+    });
+</script>
 
 </body>
 </html>

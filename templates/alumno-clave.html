@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clave de la evaluación</title>
+    <link rel="stylesheet" href="../static/css/estilo.css">
+</head>
+<body>
+
+<header>
+    <h2>Sistema de Evaluación Docente</h2>
+    <nav><a href="index.html">Inicio</a> | <a href="alumno-evaluaciones.html">Evaluaciones abiertas</a></nav>
+</header>
+
+<main>
+
+<section class="tarjeta angosta">
+    <h1>Clave de la evaluación</h1>
+    <p><strong>Grupo:</strong> GTID243<br><strong>Profesor:</strong> María Hernández Ruiz<br><strong>Materia:</strong> Programación Orientada a Objetos</p>
+    <p>Escribe la clave que te dieron en el salón para ver la encuesta.</p>
+    <form id="formClave" action="Form-alumnos.html" method="get" novalidate>
+        <label for="clave">Clave</label>
+        <input type="text" id="clave" name="clave" inputmode="numeric" minlength="4" maxlength="6" pattern="[0-9]{4,6}" title="La clave debe tener de 4 a 6 números. Ejemplo: 4821" placeholder="De 4 a 6 dígitos" required>
+        <button type="submit">Continuar</button>
+    </form>
+</section>
+</main>
+
+<script>
+    // ---- Utilidades comunes (alertas y marcado de campos con error) ----
+    function avisar(msg, campo) {
+        alert(msg);
+        if (campo) { campo.classList.add('invalido'); campo.focus(); }
+    }
+    document.addEventListener('input', function (e) { e.target.classList.remove('invalido'); });
+    document.addEventListener('change', function (e) { e.target.classList.remove('invalido'); });
+
+    var form = document.getElementById('formClave');
+    var clave = document.getElementById('clave');
+
+    // Aquí solo se valida el formato; que la clave sea la correcta de esta evaluación lo comprueba el servidor.
+    form.addEventListener('submit', function (e) {
+        var c = clave.value.trim();
+        if (c === '') { e.preventDefault(); avisar('Escribe la clave de la evaluación.', clave); return; }
+        if (!/^[0-9]{4,6}$/.test(c)) { e.preventDefault(); avisar('La clave debe tener de 4 a 6 números (solo dígitos).\nEjemplo: 4821', clave); return; }
+        clave.value = c;
+    });
+</script>
+
+</body>
+</html>

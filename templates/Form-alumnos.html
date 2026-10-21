@@ -10,7 +10,7 @@
 
 <header>
     <h2>Sistema de Evaluación Docente</h2>
-    
+    <nav><a href="index.html">Inicio</a> | <a href="alumno-evaluaciones.html">Evaluaciones abiertas</a></nav>
 </header>
 
 <main>
@@ -20,7 +20,7 @@
     <p><strong>Grupo:</strong> GTID243<br><strong>Profesor:</strong> María Hernández Ruiz<br><strong>Materia:</strong> Programación Orientada a Objetos</p>
     <p>Califica cada pregunta del 5 al 10. Todas son obligatorias.</p>
 </section>
-<form action="#" method="post">
+<form id="formEncuesta" action="gracias.html" method="get" novalidate>
 <div class="pregunta"><p>1. El profesor expone los contenidos y prácticas de su asignatura de manera clara, gradual y congruente.</p><div class="escala"><label><input type="radio" name="p1" value="5" required> 5</label><label><input type="radio" name="p1" value="6" required> 6</label><label><input type="radio" name="p1" value="7" required> 7</label><label><input type="radio" name="p1" value="8" required> 8</label><label><input type="radio" name="p1" value="9" required> 9</label><label><input type="radio" name="p1" value="10" required> 10</label></div></div>
 <div class="pregunta"><p>2. El profesor proporciona orientación y apoyo a los alumnos con problemas de aprendizaje.</p><div class="escala"><label><input type="radio" name="p2" value="5" required> 5</label><label><input type="radio" name="p2" value="6" required> 6</label><label><input type="radio" name="p2" value="7" required> 7</label><label><input type="radio" name="p2" value="8" required> 8</label><label><input type="radio" name="p2" value="9" required> 9</label><label><input type="radio" name="p2" value="10" required> 10</label></div></div>
 <div class="pregunta"><p>3. Propicia un ambiente de confianza y de participación durante la clase.</p><div class="escala"><label><input type="radio" name="p3" value="5" required> 5</label><label><input type="radio" name="p3" value="6" required> 6</label><label><input type="radio" name="p3" value="7" required> 7</label><label><input type="radio" name="p3" value="8" required> 8</label><label><input type="radio" name="p3" value="9" required> 9</label><label><input type="radio" name="p3" value="10" required> 10</label></div></div>
@@ -41,6 +41,45 @@
 </section>
 </form>
 </main>
+
+<script>
+    // ---- Utilidades comunes (alertas y marcado de campos con error) ----
+    function avisar(msg, campo) {
+        alert(msg);
+        if (campo) { campo.classList.add('invalido'); campo.focus(); }
+    }
+    document.addEventListener('input', function (e) { e.target.classList.remove('invalido'); });
+    document.addEventListener('change', function (e) { e.target.classList.remove('invalido'); });
+
+    var TOTAL_PREGUNTAS = 12;
+    var form = document.getElementById('formEncuesta');
+    var comentario = document.getElementById('comentario');
+
+    form.addEventListener('submit', function (e) {
+        var faltan = [];
+        for (var i = 1; i <= TOTAL_PREGUNTAS; i++) {
+            var marcada = form.querySelector('input[name="p' + i + '"]:checked');
+            var v = marcada ? parseInt(marcada.value, 10) : NaN;
+            if (isNaN(v) || v < 5 || v > 10) faltan.push(i);
+        }
+        if (faltan.length) {
+            e.preventDefault();
+            var primera = form.querySelector('input[name="p' + faltan[0] + '"]');
+            alert('Faltan por contestar (todas son obligatorias, del 5 al 10):\nPregunta(s) ' + faltan.join(', '));
+            primera.closest('.pregunta').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            primera.focus();
+            return;
+        }
+        comentario.value = comentario.value.trim();
+        if (comentario.value.length > 500) {
+            e.preventDefault();
+            avisar('El comentario no puede pasar de 500 caracteres.', comentario);
+            return;
+        }
+        // Todo correcto: se avisa y el formulario continúa hacia gracias.html
+        alert('Evaluación enviada correctamente. ¡Gracias por participar!');
+    });
+</script>
 
 </body>
 </html>

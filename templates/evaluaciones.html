@@ -10,28 +10,62 @@
 
 <header>
     <h2>Sistema de Evaluación Docente</h2>
+    <nav><a href="index.html">Inicio</a> | <a href="menu.html">Menú principal</a></nav>
 </header>
 
 <main>
 
 <h1>Evaluaciones</h1>
-<p><a class="boton" href="#">Nueva evaluación</a></p>
+<p><a class="boton" href="Form-evaluacion.html">Nueva evaluación</a></p>
 <section class="tarjeta">
     <table>
-        <tr><th>Grupo</th><th>Profesor</th><th>Materia</th><th>Alumnos</th><th>Respondidas</th><th>Estatus</th><th>Acciones</th></tr>
-        <tr><td>GTID232</td><td>Juan Pérez López</td><td>Bases de Datos</td><td>3</td><td>3</td><td>Cerrada</td><td><a class="boton chico" href="#">Modificar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr><tr><td>GTID243</td><td>María Hernández Ruiz</td><td>Programación Orientada a Objetos</td><td>30</td><td>12</td><td>Abierta</td><td><a class="boton chico" href="#">Modificar</a> <a class="boton chico" href="#">Cerrar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr>
+        <tr><th>Grupo</th><th>Profesor</th><th>Materia</th><th>Alumnos</th><th>Respondidas</th><th>Clave</th><th>Estatus</th><th>Acciones</th></tr>
+        <tr><td>GTID232</td><td>Juan Pérez López</td><td>Bases de Datos</td><td>3</td><td>3</td><td>4821</td><td>Cerrada</td><td><a class="boton chico" href="#modificar">Modificar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr><tr><td>GTID243</td><td>María Hernández Ruiz</td><td>Programación Orientada a Objetos</td><td>30</td><td>12</td><td>7305</td><td>Abierta</td><td><a class="boton chico" href="#modificar">Modificar</a> <a class="boton chico" href="#">Cerrar</a> <a class="boton chico peligro" href="#">Eliminar</a> </td></tr>
     </table>
 </section>
 <section class="tarjeta" id="modificar">
     <h2>Modificar evaluación</h2>
     <p>GTID243 - María Hernández Ruiz - Programación Orientada a Objetos</p>
-    <form action="#" method="post">
+    <form id="formModificar" action="#" method="post" novalidate>
         <label for="numAlumnos">Número de alumnos (no menor a las encuestas ya respondidas)</label>
-        <input type="number" id="numAlumnos" name="numAlumnos" min="12" step="1" value="30" required>
+        <input type="number" id="numAlumnos" name="numAlumnos" min="12" max="100" step="1" value="30" required>
+        <label for="clave">Clave de la evaluación</label>
+        <input type="text" id="clave" name="clave" inputmode="numeric" minlength="4" maxlength="6" pattern="[0-9]{4,6}" title="La clave debe tener de 4 a 6 números. Ejemplo: 4821" value="7305" required>
         <button type="submit">Guardar</button>
     </form>
 </section>
 </main>
+
+<script>
+    // ---- Utilidades comunes (alertas y marcado de campos con error) ----
+    function avisar(msg, campo) {
+        alert(msg);
+        if (campo) { campo.classList.add('invalido'); campo.focus(); }
+    }
+    document.addEventListener('input', function (e) { e.target.classList.remove('invalido'); });
+    document.addEventListener('change', function (e) { e.target.classList.remove('invalido'); });
+
+    var MAX_ALUMNOS = 100;   // ajustar al máximo real por grupo
+
+    var form = document.getElementById('formModificar');
+    var numAlumnos = document.getElementById('numAlumnos');
+    var clave = document.getElementById('clave');
+    var respondidas = parseInt(numAlumnos.min, 10);   // no puede ser menor a las encuestas ya respondidas
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var n = numAlumnos.value.trim();
+        if (!/^[0-9]+$/.test(n)) { avisar('El número de alumnos debe ser un entero (sin decimales, signos ni letras).', numAlumnos); return; }
+        n = parseInt(n, 10);
+        if (n < respondidas) { avisar('El número de alumnos no puede ser menor a las encuestas ya respondidas (' + respondidas + ').', numAlumnos); return; }
+        if (n > MAX_ALUMNOS) { avisar('El número de alumnos no puede pasar de ' + MAX_ALUMNOS + '.', numAlumnos); return; }
+
+        var c = clave.value.trim();
+        if (!/^[0-9]{4,6}$/.test(c)) { avisar('La clave debe tener de 4 a 6 números (solo dígitos).\nEjemplo: 4821', clave); return; }
+
+        alert('Cambios guardados correctamente.\nAlumnos: ' + n + '   Clave: ' + c);
+    });
+</script>
 
 </body>
 </html>
