@@ -81,8 +81,9 @@
             return;
         }
 
-        if (!/^GTID[1-9]{3}$/.test(valor)) {
-            avisar('El grupo debe comenzar con con cuatro letras mayusculas y tener 3 números del 1 al 9. Ejemplo: GTID243', nombre);
+        // 4 letras mayúsculas (cualquiera) + 3 números del 1 al 9
+        if (!/^[A-Z]{4}[1-9]{3}$/.test(valor)) {
+            avisar('El grupo debe comenzar con cuatro letras mayúsculas y tener 3 números del 1 al 9. Ejemplo: GTID243', nombre);
             return;
         }
 
