@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,7 +11,10 @@
 
 <header>
     <h2>Sistema de Evaluación Docente</h2>
-    <nav><a href="index.html">Inicio</a> | <a href="menu.html">Menú principal</a></nav>
+    <nav>
+        <a href="index.html">Inicio</a> |
+        <a href="menu.html">Menú principal</a>
+    </nav>
 </header>
 
 <main>
@@ -19,25 +23,49 @@
 
 <section class="tarjeta">
     <h2>Nuevo grupo</h2>
+
     <form id="formGrupo" action="#" method="post" novalidate>
+
         <label for="nombre">Nombre del grupo</label>
         <input type="text" id="nombre" name="nombre" maxlength="7"
             autocomplete="off" placeholder="Ejemplo: GTID243" required>
+
+        <label for="cantidad">Cantidad de alumnos</label>
+        <input type="number" id="cantidad" name="cantidad"
+            min="0" max="99" step="1"
+            placeholder="Ejemplo: 30" required>
+
         <button type="submit">Guardar</button>
+
     </form>
 </section>
 
 <section class="tarjeta">
     <h2>Grupos registrados</h2>
+
     <table>
-        <tr><th>Nombre</th><th>Acciones</th></tr>
+        <tr>
+            <th>Nombre</th>
+            <th>Cantidad de alumnos</th>
+            <th>Acciones</th>
+        </tr>
+
         <tr>
             <td>GTID232</td>
-            <td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a></td>
+            <td>25</td>
+            <td>
+                <a class="boton chico" href="#">Editar</a>
+                <a class="boton chico peligro" href="#">Eliminar</a>
+            </td>
         </tr>
+
         <tr>
             <td>GTID243</td>
-            <td><a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a></td>
+            <td>30</td>
+            <td>
+                <a class="boton chico" href="#">Editar</a>
+                <a class="boton chico peligro" href="#">Eliminar</a>
+            </td>
         </tr>
     </table>
 </section>
@@ -45,8 +73,10 @@
 </main>
 
 <script>
+
     function avisar(msg, campo) {
         alert(msg);
+
         if (campo) {
             campo.classList.add('invalido');
             campo.focus();
@@ -59,6 +89,7 @@
 
     var form = document.getElementById('formGrupo');
     var nombre = document.getElementById('nombre');
+    var cantidad = document.getElementById('cantidad');
     var tabla = document.querySelector('table');
 
     // Convertir a mayúsculas y quitar espacios
@@ -67,45 +98,70 @@
     });
 
     form.addEventListener('submit', function(e) {
+
         e.preventDefault();
 
         var valor = nombre.value;
+        var alumnos = cantidad.value;
 
+        // Validar nombre vacío
         if (valor === '') {
             avisar('Escribe el nombre del grupo. Ejemplo: GTID243', nombre);
             return;
         }
 
+        // Validar longitud
         if (valor.length !== 7) {
             avisar('El grupo debe tener 7 caracteres. Ejemplo: GTID243', nombre);
             return;
         }
 
-        // 4 letras mayúsculas (cualquiera) + 3 números del 1 al 9
+        // 4 letras mayúsculas + 3 números del 1 al 9
         if (!/^[A-Z]{4}[1-9]{3}$/.test(valor)) {
             avisar('El grupo debe comenzar con cuatro letras mayúsculas y tener 3 números del 1 al 9. Ejemplo: GTID243', nombre);
             return;
         }
 
+        // Validar cantidad de alumnos de 0 a 99
+        if (
+            alumnos === '' ||
+            !Number.isInteger(Number(alumnos)) ||
+            Number(alumnos) < 0 ||
+            Number(alumnos) > 99
+        ) {
+            avisar('La cantidad de alumnos debe ser un número entero de 0 a 99.', cantidad);
+            return;
+        }
+
         // Revisar si el grupo ya existe
         for (var i = 1; i < tabla.rows.length; i++) {
+
             if (tabla.rows[i].cells[0].textContent === valor) {
                 avisar('Ese grupo ya está registrado: ' + valor, nombre);
                 return;
             }
+
         }
 
         // Agregar el grupo a la tabla
         var fila = tabla.insertRow(-1);
+
         fila.insertCell(0).textContent = valor;
-        fila.insertCell(1).innerHTML = '<a class="boton chico" href="#">Editar</a> <a class="boton chico peligro" href="#">Eliminar</a>';
+        fila.insertCell(1).textContent = alumnos;
+
+        fila.insertCell(2).innerHTML =
+            '<a class="boton chico" href="#">Editar</a> ' +
+            '<a class="boton chico peligro" href="#">Eliminar</a>';
 
         alert('Grupo guardado correctamente: ' + valor);
 
         form.reset();
         nombre.focus();
+
     });
+
 </script>
 
 </body>
 </html>
+```
