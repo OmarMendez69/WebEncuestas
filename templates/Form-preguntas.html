@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Preguntas de la encuesta</title>
+    <link rel="stylesheet" href="../static/css/estilo.css">
+</head>
+<body>
+
+<header>
+    <h2>Sistema de Evaluación Docente</h2>
+    <nav><a href="index.html">Inicio</a> | <a href="menu.html">Menú principal</a></nav>
+</header>
+
+<main>
+
+<h1>Preguntas de la encuesta</h1>
+<section class="tarjeta">
+    <h2 id="tituloForm">Agregar pregunta</h2>
+    <form id="formPregunta" action="#" method="post" novalidate>
+        <label for="texto">Texto de la pregunta</label>
+        <textarea id="texto" name="texto" rows="3" minlength="10" maxlength="250" title="Entre 10 y 250 caracteres. Debe comenzar con mayúscula." placeholder="Ejemplo: El profesor entra a tiempo a clase." required></textarea>
+        <p class="nota">Los alumnos califican cada pregunta del 5 al 10.</p>
+        <button type="submit" id="btnGuardar">Guardar</button>
+        <button type="button" id="btnCancelar" style="display:none">Cancelar</button>
+    </form>
+</section>
+
+<section class="tarjeta">
+    <h2>Preguntas registradas</h2>
+    <table id="tabla">
+        <tr>
+            <th>#</th>
+            <th>Pregunta</th>
+            <th>Acciones</th>
+        </tr>
+    </table>
+</section>
+
+</main>
+
+<script>
+    // ---- Utilidades comunes ----
+    function avisar(msg, campo) {
+        alert(msg);
+        if (campo) {
+            campo.classList.add('invalido');
+            campo.focus();
+        }
+    }
+
+    document.addEventListener('input', function (e) {
+        e.target.classList.remove('invalido');
+    });
+
+    function limpiar(s) {
+        return s.replace(/\s+/g, ' ').trim();
+    }
+
+    function sinAcentos(s) {
+        return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    // DEMO sin base de datos (se pierde al recargar).
+    var preguntas = [
+        'El profesor expone los contenidos y prácticas de su asignatura de manera clara, gradual y congruente.',
+        'El profesor proporciona orientación y apoyo a los alumnos con problemas de aprendizaje.',
+        'Propicia un ambiente de confianza y de participación durante la clase.',
+        'Establece controles de evaluación del aprendizaje considerando: exámenes parciales, participación, trabajos, prácticas, etc.',
+        'El profesor da seguimiento al programa, considerando los propósitos y contenidos, a fin de lograr el saber, el saber hacer y el saber ser.',
+        'El profesor emplea métodos didácticos (gráficas, folletos, acetatos, ilustraciones, dinámicas de grupo o trabajos en equipo) para facilitar la comprensión de los temas.',
+        'El profesor proporciona mayores referencias sobre los temas que se les dificultan a los alumnos.',
+        'El profesor responde todas las preguntas formuladas por los alumnos.',
+        'El profesor muestra disposición para atender a los alumnos dentro y fuera de clase para resolver y aclarar preguntas o dudas en temas que te interesen.',
+        'El nivel de dificultad de los ejemplos de clase es congruente con el de los exámenes.',
+        'El profesor entra a tiempo a clase.',
+        'El profesor fomenta el auto-aprendizaje o actividades de lectura.'
+    ];
+    var editando = -1;   // posición de la pregunta que se edita (-1 = agregando)
+
+    var form = document.getElementById('formPregunta');
+    var texto = document.getElementById('texto');
+    var tabla = document.getElementById('tabla');
+    var titulo = document.getElementById('tituloForm');
+    var btnGuardar = document.getElementById('btnGuardar');
+    var btnCancelar = document.getElementById('btnCancelar');
+
+    var RE_PREGUNTA = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9¿¡][A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9 .,:;()\/&'"+%¿?¡!\-]*$/;
+    var LETRA = /[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/;
+
+    function validarPregunta(v) {
+        if (v === '') {
+            return 'Escribe el texto de la pregunta.';
+        }
+
+        if (v.length < 10) {
+            return 'La pregunta debe tener al menos 10 caracteres.';
+        }
+
+        if (v.length > 250) {
+            return 'La pregunta no puede pasar de 250 caracteres.';
+        }
+
+        if (!RE_PREGUNTA.test(v)) {
+            return 'Debe empezar con letra o número y solo puede llevar letras, números, espacios y . , : ; ( ) / & + % ? ! - " \'';
+        }
+
+        if ((v.match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g) || []).length < 10) {
+            return 'La pregunta debe tener al menos 10 letras.';
+        }
+
+        if (/([A-Za-zÁÉÍÓÚÜÑáéíóúüñ])\1\1/i.test(v)) {
+            return 'La pregunta tiene la misma letra repetida 3 veces seguidas.';
+        }
+
+        var primera = v.match(LETRA)[0];
+
+        if (primera !== primera.toLocaleUpperCase('es-MX')) {
+            return 'La pregunta debe comenzar con mayúscula.';
+        }
+
+        for (var i = 0; i < preguntas.length; i++) {
+            if (i !== editando && sinAcentos(preguntas[i]) === sinAcentos(v)) {
+                return 'Esa pregunta ya está registrada.';
+            }
+        }
+
+        return '';
+    }
+
+    // Dibuja la tabla a partir del arreglo
+    function pintar() {
+        while (tabla.rows.length > 1) {
+            tabla.deleteRow(1);
+        }
+
+        for (var i = 0; i < preguntas.length; i++) {
+            var tr = tabla.insertRow(-1);
+
+            tr.insertCell(-1).textContent = i + 1;
+            tr.insertCell(-1).textContent = preguntas[i];
+            tr.insertCell(-1).innerHTML =
+                '<button type="button" class="chico" onclick="editar(' + i + ')">Editar</button> ' +
+                '<button type="button" class="chico peligro" onclick="eliminar(' + i + ')">Eliminar</button>';
+        }
+    }
+
+    function cancelarEdicion() {
+        editando = -1;
+        titulo.textContent = 'Agregar pregunta';
+        btnGuardar.textContent = 'Guardar';
+        btnCancelar.style.display = 'none';
+        form.reset();
+    }
+
+    function editar(i) {
+        editando = i;
+        texto.value = preguntas[i];
+        titulo.textContent = 'Editar pregunta ' + (i + 1);
+        btnGuardar.textContent = 'Guardar cambios';
+        btnCancelar.style.display = 'inline-block';
+        texto.focus();
+    }
+
+    function eliminar(i) {
+        if (preguntas.length === 1) {
+            alert('La encuesta debe tener al menos una pregunta.');
+            return;
+        }
+
+        if (confirm('¿Eliminar esta pregunta?\n\n' + preguntas[i])) {
+            preguntas.splice(i, 1);
+            cancelarEdicion();
+            pintar();
+        }
+    }
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var valor = limpiar(texto.value);
+        var error = validarPregunta(valor);
+
+        if (error) {
+            avisar(error, texto);
+            return;
+        }
+
+        if (editando === -1) {
+            preguntas.push(valor);
+            alert('Pregunta guardada correctamente.');
+        } else {
+            preguntas[editando] = valor;
+            alert('Pregunta modificada correctamente.');
+        }
+
+        cancelarEdicion();
+        pintar();
+    });
+
+    btnCancelar.addEventListener('click', cancelarEdicion);
+
+    pintar();
+</script>
+
+</body>
+</html>
